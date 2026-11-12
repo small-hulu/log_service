@@ -1,0 +1,14 @@
+{
+  "pcu_id": "rk3588-log-test",
+  "zenoh_config": "/root/xsw/log_service/config/zenoh.json5",
+  "work_root": "/root/xsw/log_service/runtime/work",
+  "max_bytes": 268435456,
+  "max_files": 10000,
+  "chunk_size": 65536,
+  "bytes_per_second": 4194304,
+  "ack_timeout_seconds": 5,
+  "sources": [
+    {"name": "hand", "root": "/root/xsw/log_service/runtime/fixtures/hand"},
+    {"name": "glove", "root": "/root/xsw/log_service/runtime/fixtures/glove"}
+  ]
+}

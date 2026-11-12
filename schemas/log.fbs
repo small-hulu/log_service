@@ -1,0 +1,23 @@
+namespace poke.logwire;
+
+// Standalone draft v1; not yet part of the shared PCU protocol package.
+enum Mode:ubyte { ALL, LATEST }
+enum Kind:ubyte { GET, BEGIN, CHUNK, END, ACK, COMPLETE, ERROR }
+table Message {
+  version:ushort = 1;
+  kind:Kind;
+  request_id:string (required);
+  mode:Mode;
+  modules:[string];
+  file_name:string;
+  file_size:ulong;
+  chunk_size:uint;
+  chunk_count:uint;
+  chunk_index:uint;
+  sha256:string;
+  data:[ubyte];
+  error_code:string;
+  detail:string;
+}
+root_type Message;
+file_identifier "PLOG";

@@ -1,0 +1,97 @@
+[
+  {
+    "passed": true,
+    "mode": "all",
+    "request_id": "e500cfe4026a4fd7b2c7df11a816bf92",
+    "archive": "D:\\codex_log\\log-service-received\\logs-e500cfe4026a4fd7b2c7df11a816bf92.tar.gz",
+    "bytes": 601141,
+    "chunks": 10,
+    "sha256": "4c83e8b6b520240d0bee69a239eaa1a21811b89baa682f2b05e88cc74036cc22",
+    "members": [
+      "glove/run_old/app.log",
+      "glove/run_current/app.log",
+      "glove/run_current/app.1.log",
+      "manifest.json",
+      "hand/run_old/app.log",
+      "hand/run_current/app.log",
+      "hand/run_current/app.1.log"
+    ],
+    "elapsed_seconds": 1.046,
+    "case": "ALL retained files"
+  },
+  {
+    "passed": true,
+    "mode": "latest",
+    "request_id": "471f93585aa2424bbc5aa69e5663b3a0",
+    "archive": "D:\\codex_log\\log-service-received\\logs-471f93585aa2424bbc5aa69e5663b3a0.tar.gz",
+    "bytes": 601027,
+    "chunks": 10,
+    "sha256": "b8d24efa6b63e4a678c80a7389528c9c32fcea7e7de5fdea3c83743e43ed7770",
+    "members": [
+      "glove/run_current/app.log",
+      "glove/run_current/app.1.log",
+      "manifest.json",
+      "hand/run_current/app.log",
+      "hand/run_current/app.1.log"
+    ],
+    "elapsed_seconds": 0.906,
+    "case": "LATEST includes rotation"
+  },
+  {
+    "passed": true,
+    "mode": "latest",
+    "request_id": "ca175abbc2534ec89ef90c32fdcd11bf",
+    "archive": "D:\\codex_log\\log-service-received\\logs-ca175abbc2534ec89ef90c32fdcd11bf.tar.gz",
+    "bytes": 300712,
+    "chunks": 5,
+    "sha256": "d4cfa3e62701dc75a91c0ec0cb051c9405f670c749e3cddb095398c107d48650",
+    "members": [
+      "manifest.json",
+      "hand/run_current/app.log",
+      "hand/run_current/app.1.log"
+    ],
+    "elapsed_seconds": 0.609,
+    "case": "selected module"
+  },
+  {
+    "passed": true,
+    "expected_error": "NO_LOGS",
+    "request_id": "b36c9354afe0490eaea9a202ed6eccfb",
+    "case": "empty scope"
+  },
+  {
+    "passed": true,
+    "expected_error": "LATEST_UNAVAILABLE",
+    "request_id": "d7edb9515f9641f48540b4f50ac94fd3",
+    "case": "missing startup marker"
+  },
+  {
+    "passed": true,
+    "expected_error": "UNKNOWN_MODULE",
+    "request_id": "fa3c9b8959784c5ab57744c2846a5d58",
+    "case": "unknown module"
+  },
+  {
+    "passed": true,
+    "expected_error": "ACK_TIMEOUT",
+    "request_id": "04e71d9b0bba4fbab279bac3f80cf5fd",
+    "case": "missing ACK"
+  },
+  {
+    "passed": true,
+    "mode": "all",
+    "request_id": "d06c18e57e34441cb01643f32b51ab15",
+    "archive": "D:\\codex_log\\log-service-received\\logs-d06c18e57e34441cb01643f32b51ab15.tar.gz",
+    "bytes": 300761,
+    "chunks": 5,
+    "sha256": "3c84cb07d0c60e7cae165d8ef06b4cab22c2acbc977fe2ab2e50244cb14d5af3",
+    "members": [
+      "manifest.json",
+      "hand/run_old/app.log",
+      "hand/run_current/app.log",
+      "hand/run_current/app.1.log"
+    ],
+    "elapsed_seconds": 1.796,
+    "case": "recovery after timeout"
+  }
+]

@@ -1,0 +1,36 @@
+Start testing: Nov 11 14:35 CST
+----------------------------------------------------------
+1/2 Testing: log_core_contracts
+1/2 Test: log_core_contracts
+Command: "/root/xsw/log_service/build/log_tests"
+Directory: /root/xsw/log_service/build
+"log_core_contracts" start time: Nov 11 14:35 CST
+Output:
+----------------------------------------------------------
+PASS: ALL/LATEST, rotated files, symlinks, scope, limits, cancellation, archive, codec
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"log_core_contracts" end time: Nov 11 14:35 CST
+"log_core_contracts" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: log_service_lifecycle
+2/2 Test: log_service_lifecycle
+Command: "/root/xsw/log_service/build/log_service_tests"
+Directory: /root/xsw/log_service/build
+"log_service_lifecycle" start time: Nov 11 14:35 CST
+Output:
+----------------------------------------------------------
+completed request=success bytes=89
+PASS: BUSY, active duplicate, wrong ACK, timeout, confirmed delivery, shutdown cleanup
+<end of output>
+Test time =   1.03 sec
+----------------------------------------------------------
+Test Passed.
+"log_service_lifecycle" end time: Nov 11 14:35 CST
+"log_service_lifecycle" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Nov 11 14:35 CST
