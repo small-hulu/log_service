@@ -8,7 +8,9 @@
   "bytes_per_second": 4194304,
   "ack_timeout_seconds": 5,
   "sources": [
-    {"name": "hand", "root": "/root/xsw/log_service/runtime/fixtures/hand"},
-    {"name": "glove", "root": "/root/xsw/log_service/runtime/fixtures/glove"}
+    {"name": "poke_recorder", "root": "/var/log/poke_recorder"},
+    {"name": "video_manager", "root": "/var/log/video_manager"},
+    {"name": "pico_broker", "root": "/var/log/pico_broker"},
+    {"name": "dex_hand", "root": "/var/log/dex_hand"}
   ]
 }

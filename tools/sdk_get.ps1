@@ -1,9 +1,13 @@
 param(
     [ValidateSet('all','latest')][string]$Mode = 'all',
     [string[]]$Modules = @(),
-    [string]$Output = 'D:\codex_log\log-service-received',
-    [string]$Endpoint = 'tcp/10.22.69.16:17447'
+    [string]$Output = 'D:\log_client_test',
+    [string]$Endpoint = 'tcp/10.23.2.11:17447',
+    [string]$PythonExe = "$PSScriptRoot\..\.venv\Scripts\python.exe"
 )
-$clientPython = 'D:\codex_log\tools\zenoh-test\Scripts\python.exe'
-& $clientPython "$PSScriptRoot\sdk_client.py" --endpoint $Endpoint --mode $Mode --output $Output --modules @Modules
+if (-not (Test-Path -LiteralPath $PythonExe -PathType Leaf)) {
+    Write-Error 'Python environment missing. Create .venv as described in README.md or pass -PythonExe.'
+    exit 1
+}
+& $PythonExe "$PSScriptRoot\sdk_client.py" --endpoint $Endpoint --mode $Mode --output $Output --modules @Modules
 exit $LASTEXITCODE

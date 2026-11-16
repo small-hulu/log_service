@@ -6,7 +6,7 @@ import sys
 import time
 
 root = Path(__file__).resolve().parents[1]
-output = Path("D:/codex_log/log-service-received")
+output = Path("D:/log_client_test/e2e")
 report = []
 cases = [
     ("ALL retained files", ["--mode", "all", "--modules", "hand", "glove", "--verify-fixtures"]),

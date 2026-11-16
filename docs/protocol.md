@@ -8,10 +8,10 @@
 
 | 信息 | 当前联调值 | 用途 |
 |---|---|---|
-| 盒子 IP | `10.22.69.16` | 电脑访问盒子的网络地址 |
-| Zenoh TCP 端口 | `17447` | 完整连接地址为 `tcp/10.22.69.16:17447` |
+| 盒子 IP | `10.23.2.11` | 电脑访问盒子的网络地址 |
+| Zenoh TCP 端口 | `17447` | 完整连接地址为 `tcp/10.23.2.11:17447` |
 | 设备标识 `pcu_id` | `rk3588-log-test` | 组成下方请求、结果和确认 Key；不是密码 |
-| 模块名称 `modules` | `hand`、`glove` | 指定日志来源；空列表表示全部配置来源 |
+| 模块名称 `modules` | `poke_recorder`、`video_manager`、`pico_broker`、`dex_hand` | 指定日志来源；空列表表示全部配置来源；需部署新版来源配置 |
 | 报文定义 | `schemas/log.fbs`，`PLOG` v1 | SDK 与盒子使用同一版 FlatBuffers 定义 |
 
 连接前提：盒子上的 `log_service` 已启动并监听端口，电脑到盒子网络互通且 TCP 17447 可访问。**ping 通只表示 IP 可达，不代表日志服务或端口已就绪。** SDK 必须通过 Zenoh 建立连接，不能直接向普通 TCP Socket 发送 GET 文本。
@@ -20,13 +20,13 @@
 
 SDK 获取一次日志的步骤：
 
-1. 连接 `tcp/10.22.69.16:17447`，使用约定的 `pcu_id`。
+1. 连接 `tcp/10.23.2.11:17447`，使用约定的 `pcu_id`。
 2. 生成唯一 `request_id`，先订阅对应的 `result/{request_id}` Key，再发布 GET。
 3. GET 携带 `request_id`、`mode` 和 `modules`。`ALL` 获取所选模块当前保留的日志；`LATEST` 获取各模块进程本次启动批次的日志，包含该批次轮转文件。当前没有起止时间筛选字段。
 4. 接收 BEGIN、CHUNK、END，按块编号合并为 `tar.gz`，核对大小、SHA-256 并验证归档。
 5. 发布 ACK，等待 COMPLETE 后认定本次交付成功。错误与超时按下文规则处理。
 
-`tools/sdk_client.py` 是模拟 SDK 的测试客户端，已实现上述流程，可作为正式 SDK 接入参考。当前默认日志来源为合成测试数据，接入真实模块前需调整盒子侧来源配置。
+`tools/sdk_client.py` 是模拟 SDK 的测试客户端，已实现上述流程，可作为正式 SDK 接入参考。默认配置已改为四个真实 `/var/log/` 来源，须同步板端配置并重启服务。真实来源先使用 ALL；缺少 `current_run` 标记和启动批次目录时，LATEST 返回 `LATEST_UNAVAILABLE`。
 
 ## Zenoh Key
 
