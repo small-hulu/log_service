@@ -42,7 +42,8 @@ public:
     LogTransfer(const Config& config, LogTransport& transport)
         : config_(config), transport_(transport) {}
     Message describe(const Message& request, const fs::path& archive) const;
-    void send(const Message& metadata, const fs::path&, const Cancelled&);
+    // Sends BEGIN and CHUNK. The service arms ACK reception before publishing END.
+    void send_data(const Message& metadata, const fs::path&, const Cancelled&);
 private:
     const Config& config_;
     LogTransport& transport_;
@@ -69,8 +70,9 @@ private:
     std::condition_variable cv_;
     std::optional<Message> pending_;
     std::string active_id_, expected_hash_;
+    MessageHeader active_client_;
     std::uint64_t expected_size_{};
-    bool acknowledged_{};
+    bool awaiting_ack_{}, acknowledged_{};
     std::deque<std::string> recent_ids_;
     std::thread worker_;
 };

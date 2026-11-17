@@ -1,23 +1,47 @@
+// Copyright Pokebot Co., Ltd. 2026
+
+include "common.fbs";
+
 namespace poke.logwire;
 
-// Standalone draft v1; not yet part of the shared PCU protocol package.
-enum Mode:ubyte { ALL, LATEST }
-enum Kind:ubyte { GET, BEGIN, CHUNK, END, ACK, COMPLETE, ERROR }
-table Message {
-  version:ushort = 1;
-  kind:Kind;
-  request_id:string (required);
-  mode:Mode;
-  modules:[string];
-  file_name:string;
-  file_size:ulong;
-  chunk_size:uint;
-  chunk_count:uint;
-  chunk_index:uint;
-  sha256:string;
-  data:[ubyte];
-  error_code:string;
-  detail:string;
+enum Mode : ubyte {
+  ALL = 0,
+  LATEST = 1
 }
+
+enum Kind : ubyte {
+  GET = 0,
+  BEGIN = 1,
+  CHUNK = 2,
+  END = 3,
+  ACK = 4,
+  COMPLETE = 5,
+  ERROR = 6
+}
+
+// One log download uses GET, BEGIN/CHUNK/END, ACK, then COMPLETE.
+// Each kind uses only the business fields documented in log-delivery.md.
+table Message {
+  // Log transfer format version, independent of header.protocol_major/minor.
+  version: ushort = 1;
+  kind: Kind;
+  request_id: string (required);
+  mode: Mode;
+  modules: [string];
+  file_name: string;
+  // Size and SHA-256 describe the compressed archive bytes.
+  file_size: ulong;
+  chunk_size: uint;
+  chunk_count: uint;
+  chunk_index: uint;
+  sha256: string;
+  data: [ubyte];
+  error_code: string;
+  detail: string;
+  // Appended to preserve the field slots of the standalone draft.
+  // All messages in the shared protocol must carry the common envelope.
+  header: poke.protocol.MessageHeader (required);
+}
+
 root_type Message;
 file_identifier "PLOG";

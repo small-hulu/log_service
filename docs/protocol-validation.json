@@ -1,0 +1,595 @@
+{
+  "date": "2026-11-17",
+  "protocol_commit": "6562eeb7cf0165617b0c7734e2c6b9d6ccb38232",
+  "sdk_commit": "7ee883c325f370c7f67df7af25c6780f3edfbbff",
+  "endpoint": "tcp/10.23.2.11:17447",
+  "pcu_id": "rk3588-log-test",
+  "ctest": {
+    "passed": 3,
+    "failed": 0,
+    "repeated_runs_per_test": 3,
+    "asan_ubsan_passed": 3
+  },
+  "versions": {
+    "compiler": "GCC 11.4 aarch64",
+    "flatc": "25.12.19",
+    "sdk_python": "3.14.0",
+    "sdk_flatbuffers": "25.12.19",
+    "eclipse_zenoh": "1.10.2"
+  },
+  "sdk_runs": {
+    "sdk": {
+      "passed": true,
+      "endpoint": "tcp/10.23.2.11:17448",
+      "pcu_id": "rk3588-log-test",
+      "discovered_pcus": [],
+      "cases": [
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "86a4a6bb4522430e92cd4ab2ed57885f",
+          "bytes": 185606,
+          "sha256": "766e8792e9c41a467856f1aa48e6ed5c34df7e5aad824759c4c045fca36b7902",
+          "files": 24,
+          "seconds": 0.095,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-86a4a6bb4522430e92cd4ab2ed57885f.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "a097659edf1c44b4ac9610e90b56e958",
+          "bytes": 91141,
+          "sha256": "c83df93b42b92e6ff546cb64816d56243867f58d249fc8e7d44c5dba73a1918d",
+          "files": 12,
+          "seconds": 0.06,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-a097659edf1c44b4ac9610e90b56e958.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "c6796776b061408f9db4d5b244a4b12e",
+          "bytes": 185605,
+          "sha256": "459fa2a390aa2cb8a66da46c284dbce8023755df16f135822780f968cde42621",
+          "files": 24,
+          "seconds": 0.095,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-c6796776b061408f9db4d5b244a4b12e.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "f9d14e864ba445a79c2176b69757c50e",
+          "bytes": 91142,
+          "sha256": "1cf8185130702fda9dbc001981d042a2dbaaf8a40e89478dec29cbd4ec6ff545",
+          "files": 12,
+          "seconds": 0.054,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-f9d14e864ba445a79c2176b69757c50e.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "8afdb464bd474b65ade017f2f7ff7087",
+          "bytes": 185604,
+          "sha256": "85c1a7b975649b8d6e39570b0a1a818ebc83f9132cf255a7bb5524b513d4f418",
+          "files": 24,
+          "seconds": 0.094,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-8afdb464bd474b65ade017f2f7ff7087.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "c23f9ac6eaea456d833c82833021d561",
+          "bytes": 91140,
+          "sha256": "0dd15745aa58fafaf0d22d72246080fca97260413b522cd12655b3bc30432013",
+          "files": 12,
+          "seconds": 0.048,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-c23f9ac6eaea456d833c82833021d561.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "65b2a6202faa4c1bbab23ba31ef6a357",
+          "bytes": 185605,
+          "sha256": "493c70d649e224c2039cbd7bc029b2293e6bd310d295cffaf390a014b57722da",
+          "files": 24,
+          "seconds": 0.087,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-65b2a6202faa4c1bbab23ba31ef6a357.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "f132d450e50a45e88a66838cc53d602b",
+          "bytes": 91141,
+          "sha256": "4634be50f1d4235327f62bdc7f827f249edd85618b14ebc50cb67396fb0ce183",
+          "files": 12,
+          "seconds": 0.055,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-f132d450e50a45e88a66838cc53d602b.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "0fee78353bc74953ad470ac6a18fe018",
+          "bytes": 185606,
+          "sha256": "0c9ad922760270beef073dd12fec3036f4c709e2fc58f48093ca50e260e5b9f6",
+          "files": 24,
+          "seconds": 0.094,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-0fee78353bc74953ad470ac6a18fe018.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "7a41dfbfa9c84087b5543fa8887632be",
+          "bytes": 91141,
+          "sha256": "0609682eb32b07da72c9badae9ea3edff74ec3c7e9642e34201cf12e034c28c5",
+          "files": 12,
+          "seconds": 0.05,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-7a41dfbfa9c84087b5543fa8887632be.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "f7e16321f82e4a4d8cd74726268dcbe0",
+          "bytes": 185605,
+          "sha256": "4177179f75a36c3d97d5306b2944f4167b925608f6c40bdfd582c9ed6b862210",
+          "files": 24,
+          "seconds": 0.083,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-f7e16321f82e4a4d8cd74726268dcbe0.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "22ce59e675664040838c6494c552c95d",
+          "bytes": 91140,
+          "sha256": "effca4d6425179c321bc6ba302ea4141f7b0e121873ed63c258c3a05efc75a73",
+          "files": 12,
+          "seconds": 0.051,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-22ce59e675664040838c6494c552c95d.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "522265fa9713485dbf0f940751cf29c6",
+          "bytes": 185604,
+          "sha256": "4bdd4d12b3c8b7275853349ba9414fa02e5edb823c9c0d62f743f91fbf1714ee",
+          "files": 24,
+          "seconds": 0.098,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-522265fa9713485dbf0f940751cf29c6.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "5c8966d418ed463bafbf87d1ce797af1",
+          "bytes": 91142,
+          "sha256": "19993904e95a24d6fbd80f0b4d62b9e5c4766111a3af7a84707bb20435962414",
+          "files": 12,
+          "seconds": 0.05,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-5c8966d418ed463bafbf87d1ce797af1.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "c16e5ba632684728bfb36310c9b070ff",
+          "bytes": 185606,
+          "sha256": "cc0bb72c3bb94a37e26b7fab5ce3e25f662c0c691f20082025a1e2c2154b2ce1",
+          "files": 24,
+          "seconds": 0.087,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-c16e5ba632684728bfb36310c9b070ff.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "0374e918b2e941a5862bf770c26321d8",
+          "bytes": 91141,
+          "sha256": "1c335399bf94097a3ff45d04d0c98941ce311789f3ffe45c6d98f93e1a093ada",
+          "files": 12,
+          "seconds": 0.054,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-0374e918b2e941a5862bf770c26321d8.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "cd201759bca047c4a8039b8eef0eb721",
+          "bytes": 185606,
+          "sha256": "045c554d464805cb387bc1a8471bbf2ea746bdadf14d4daccca6758e2d92088e",
+          "files": 24,
+          "seconds": 0.084,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-cd201759bca047c4a8039b8eef0eb721.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "a5d1517fbaf245978f3ea747803fe027",
+          "bytes": 91141,
+          "sha256": "8e7b8c2a3baf0d65382e10f298d376ea1c26fadc1cee2a32b5f14537ce44f2aa",
+          "files": 12,
+          "seconds": 0.055,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-a5d1517fbaf245978f3ea747803fe027.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "6b7ddcebb9fa4f379168785b0f106742",
+          "bytes": 185606,
+          "sha256": "6445f2e1f41e817170b52f7a4889bef0504e934c13866cbf2da796f6ce27f26b",
+          "files": 24,
+          "seconds": 0.09,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-6b7ddcebb9fa4f379168785b0f106742.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "22e109c5e57f4b06903a32fdaf617ae7",
+          "bytes": 91141,
+          "sha256": "f81f59681f3fdb5216bc07522fef5883858f622e350019fa2c375d34e0e3c8b6",
+          "files": 12,
+          "seconds": 0.064,
+          "archive": "D:\\log_client_test\\protocol_20261117\\sdk\\logs-22e109c5e57f4b06903a32fdaf617ae7.tar.gz"
+        },
+        {
+          "case": "UNKNOWN_MODULE",
+          "request_id": "1554c1d29dc142a38248fb3cb1647a42"
+        },
+        {
+          "case": "LATEST_UNAVAILABLE",
+          "request_id": "16ac7b81853d4348a74872ed2a61e696"
+        }
+      ]
+    },
+    "large_sdk": {
+      "passed": true,
+      "endpoint": "tcp/10.23.2.11:17448",
+      "pcu_id": "rk3588-log-test",
+      "discovered_pcus": [],
+      "cases": [
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "5fecfb74b4b54fabbfaf0bdbc20a52cb",
+          "bytes": 16783432,
+          "sha256": "88a72a7f725b62c4d1c3db2c948be69227885b8fd1af65989e4861564f18073c",
+          "files": 7,
+          "seconds": 5.082,
+          "archive": "D:\\log_client_test\\protocol_20261117\\large_sdk\\logs-5fecfb74b4b54fabbfaf0bdbc20a52cb.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "hand",
+            "empty"
+          ],
+          "request_id": "5fb62fa31edd4e5bb9f022a2ce70f886",
+          "bytes": 8391904,
+          "sha256": "264ae022dd43f6d62123ac618eccf1dde5e6c52f2d91034479e2ac087ec80fcd",
+          "files": 3,
+          "seconds": 2.331,
+          "archive": "D:\\log_client_test\\protocol_20261117\\large_sdk\\logs-5fb62fa31edd4e5bb9f022a2ce70f886.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "f20711ad7849449ea7d5dd908222d0fa",
+          "bytes": 16783432,
+          "sha256": "17bb4973d771f4426e45127b2e847858cc525e323ec73dab0dfbbfc8dca6ca8b",
+          "files": 7,
+          "seconds": 4.685,
+          "archive": "D:\\log_client_test\\protocol_20261117\\large_sdk\\logs-f20711ad7849449ea7d5dd908222d0fa.tar.gz"
+        },
+        {
+          "case": "UNKNOWN_MODULE",
+          "request_id": "8c2f4ca9e3354c81afd528d8ecb3379a"
+        },
+        {
+          "case": "NO_LOGS",
+          "request_id": "2518143d6e1d4cf88cfdd1283895683a"
+        },
+        {
+          "case": "LATEST",
+          "request_id": "e0093b1bb33642f6980d7bb9b12c749c",
+          "bytes": 8391849
+        }
+      ]
+    },
+    "deployed_sdk": {
+      "passed": true,
+      "endpoint": "tcp/10.23.2.11:17447",
+      "pcu_id": "rk3588-log-test",
+      "discovered_pcus": [],
+      "cases": [
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "96edf59708d34410be0ff3b8aafb84d3",
+          "bytes": 186828,
+          "sha256": "0a338f98f162eff3f83fa568ae095cc900444c7d38858f6fd130e4ac64e7928d",
+          "files": 24,
+          "seconds": 0.152,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-96edf59708d34410be0ff3b8aafb84d3.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "77a177afe4d9420687278952aa0de44a",
+          "bytes": 93109,
+          "sha256": "d262af457f313bea32aae846230f155cd4ca632f972c12c7f88387d371c4b87e",
+          "files": 12,
+          "seconds": 0.06,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-77a177afe4d9420687278952aa0de44a.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "30d18bf5b71b48c088944218cb9d5ea8",
+          "bytes": 186830,
+          "sha256": "b9b59da404b8cf51433bbde51be1172eb63e3b460315c7525e4a16e3bcb10ff1",
+          "files": 24,
+          "seconds": 0.113,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-30d18bf5b71b48c088944218cb9d5ea8.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "3f19fead9ae545bab98e1b140da0e3ac",
+          "bytes": 93111,
+          "sha256": "f6053974030b81a2ad2965395085eb56309fee9ec22af96b6834428c506e271a",
+          "files": 12,
+          "seconds": 0.073,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-3f19fead9ae545bab98e1b140da0e3ac.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "c4d6e969232b412fa4627b3a942728db",
+          "bytes": 186828,
+          "sha256": "10746efc94b192a78ed800a4257cddbbe44e69bf84d0832a92ede9854fd35564",
+          "files": 24,
+          "seconds": 0.1,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-c4d6e969232b412fa4627b3a942728db.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "5158093e96c3406496318132b27b1d56",
+          "bytes": 93112,
+          "sha256": "93683881eaa4de9ab69395a8c346d257acd6d5d52e3ff56fcba8252978615b58",
+          "files": 12,
+          "seconds": 0.097,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-5158093e96c3406496318132b27b1d56.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "adb4ee2aab574877903c6b94756908a0",
+          "bytes": 186830,
+          "sha256": "2a3467981de95c7ef1372205fced4dc9aa9d391b1d04ab98034c7b7e6c5ab4da",
+          "files": 24,
+          "seconds": 0.109,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-adb4ee2aab574877903c6b94756908a0.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "beddeaf9c628411c8b4b25721b6851e1",
+          "bytes": 93112,
+          "sha256": "6ab4d8423db68cb1eb1134de38113c43cb7a0de2e85cde6e58005513cc90f8a9",
+          "files": 12,
+          "seconds": 0.068,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-beddeaf9c628411c8b4b25721b6851e1.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [],
+          "request_id": "12f439fc19434906a20fc4f17d3f98fa",
+          "bytes": 186829,
+          "sha256": "fa317b9e165d6d17476eec1a2e21d0d43a959da804583d3ec6919f7e92de9086",
+          "files": 24,
+          "seconds": 0.125,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-12f439fc19434906a20fc4f17d3f98fa.tar.gz"
+        },
+        {
+          "case": "ALL",
+          "modules": [
+            "poke_recorder",
+            "pico_broker"
+          ],
+          "request_id": "1c888eef44cc4992ae0f616207364f6e",
+          "bytes": 93112,
+          "sha256": "28fe3aa35bdcca1f114a21ad27b450e015a382468b7e067c235d47d0a1476c38",
+          "files": 12,
+          "seconds": 0.069,
+          "archive": "D:\\log_client_test\\protocol_20261117\\deployed_sdk\\logs-1c888eef44cc4992ae0f616207364f6e.tar.gz"
+        },
+        {
+          "case": "UNKNOWN_MODULE",
+          "request_id": "6d9e87ba93f34e64a209a52ae4decb81"
+        },
+        {
+          "case": "LATEST_UNAVAILABLE",
+          "request_id": "37564c08f1b84c7aad4cf2e022c88988"
+        }
+      ]
+    }
+  },
+  "wire_runs": {
+    "wire-results": {
+      "passed": true,
+      "endpoint": "tcp/10.23.2.11:17448",
+      "cases": [
+        "missing_header",
+        "zero_epoch",
+        "zero_sequence",
+        "empty_producer",
+        "active_duplicate_ignored",
+        "concurrent_BUSY_with_header",
+        "wrong_producer",
+        "wrong_epoch",
+        "old_sequence",
+        "wrong_hash",
+        "replayed_corrected_ack",
+        "wrong_size",
+        "duplicate_GET_advances_client_sequence",
+        "fresh_valid_ACK_completes",
+        "finished_request_duplicate",
+        "invalid_ACKs_do_not_extend_timeout",
+        "service_recovers_after_timeout"
+      ],
+      "frames_checked": 20,
+      "headers": {
+        "fc93263ac2864eb1ba0165e0b1179277": [
+          2147945268345381544,
+          126
+        ],
+        "a37278683b7c40008c9a2ac495437f47": [
+          2147945268345381544,
+          124
+        ],
+        "a633db3015e2436399fe85e79f714647": [
+          2147945268345381544,
+          132
+        ],
+        "4d2ce5d79f704c87b3c121c900cde287": [
+          2147945268345381544,
+          138
+        ]
+      },
+      "timeout_seconds": 5.016
+    },
+    "deployed-wire-results": {
+      "passed": true,
+      "endpoint": "tcp/10.23.2.11:17447",
+      "cases": [
+        "missing_header",
+        "zero_epoch",
+        "zero_sequence",
+        "empty_producer",
+        "active_duplicate_ignored",
+        "concurrent_BUSY_with_header",
+        "wrong_producer",
+        "wrong_epoch",
+        "old_sequence",
+        "wrong_hash",
+        "replayed_corrected_ack",
+        "wrong_size",
+        "duplicate_GET_advances_client_sequence",
+        "fresh_valid_ACK_completes",
+        "finished_request_duplicate",
+        "invalid_ACKs_do_not_extend_timeout",
+        "service_recovers_after_timeout"
+      ],
+      "frames_checked": 20,
+      "headers": {
+        "2d2d4dda1439453190d5439515290cb5": [
+          11122870060093443488,
+          65
+        ],
+        "4c2fdb11713a420db2e0dee7e193c5bb": [
+          11122870060093443488,
+          63
+        ],
+        "6d285500716e49dc8109b6fa1176f0dc": [
+          11122870060093443488,
+          71
+        ],
+        "ae64c4f77aa04278b4d6d74b379b3f9e": [
+          11122870060093443488,
+          77
+        ]
+      },
+      "timeout_seconds": 4.782
+    }
+  },
+  "limitations": [
+    "SDK PCU fixture used; no discovery/state simulated; real discovery returned no PCUs",
+    "Source content was synthetic TEST_DATA; large/LATEST fixtures were isolated under /userdata",
+    "SDK full CI, real gateway discovery/state and production log generation not verified"
+  ],
+  "restart": {
+    "passed": true,
+    "before_epoch": 11122870060093443488,
+    "after_epoch": 3016283633899623808,
+    "download": {
+      "passed": true,
+      "mode": "all",
+      "request_id": "fbda2209211d4c868654b8a3db0488aa",
+      "archive": "D:\\log_client_test\\protocol_20261117\\restart\\logs-fbda2209211d4c868654b8a3db0488aa.tar.gz",
+      "bytes": 186829,
+      "chunks": 3,
+      "sha256": "f0fb293c959be0432e2dec652f760f50a00c5ffca0a8621eecc2096539318871",
+      "server_epoch": 3016283633899623808,
+      "last_sequence": 6,
+      "members": [
+        "poke_recorder/poke_recorder.log.2.gz",
+        "poke_recorder/poke_recorder.log",
+        "poke_recorder/poke_recorder.log.1.gz",
+        "poke_recorder/poke_recorder.log.4.gz",
+        "poke_recorder/poke_recorder.log.3.gz",
+        "poke_recorder/poke_recorder.log.5.gz",
+        "video_manager/video_manager.log",
+        "video_manager/video_manager.log.2.gz",
+        "video_manager/video_manager.log.4.gz",
+        "video_manager/video_manager.log.3.gz",
+        "video_manager/video_manager.log.1.gz",
+        "video_manager/video_manager.log.5.gz",
+        "pico_broker/pico_broker.log.5.gz",
+        "pico_broker/pico_broker.log.3.gz",
+        "pico_broker/pico_broker.log.4.gz",
+        "pico_broker/pico_broker.log",
+        "pico_broker/pico_broker.log.2.gz",
+        "pico_broker/pico_broker.log.1.gz",
+        "dex_hand/dex_hand.log.5.gz",
+        "dex_hand/dex_hand.log.1.gz",
+        "dex_hand/dex_hand.log.2.gz",
+        "dex_hand/dex_hand.log.4.gz",
+        "dex_hand/dex_hand.log",
+        "dex_hand/dex_hand.log.3.gz",
+        "manifest.json"
+      ],
+      "elapsed_seconds": 0.281
+    }
+  },
+  "summary": {
+    "sdk_confirmed_downloads": 34,
+    "sdk_expected_errors": 6,
+    "wire_cases_per_run": 17
+  }
+}

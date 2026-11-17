@@ -13,7 +13,8 @@ RK 上执行：
 
 ```bash
 cd /root/xsw/log_service
-bash build.sh             # 配置、编译，并自动执行两组 CTest
+python3 tools/fetch_flatbuffers.py  # 首次准备协议要求的 FlatBuffers 25.12.19
+bash build.sh             # 配置、编译，并自动执行三组 CTest
 bash run.sh               # 默认后台启动；已运行时不重复启动
 bash run.sh status        # 查看状态
 bash run.sh logs          # 查看最近 50 行并持续跟踪，Ctrl+C 仅退出查看
@@ -58,7 +59,9 @@ LogService（单后台工作线程，调度与确认）
 
 `include/poke/log` 不包含 Zenoh 或 FlatBuffers 类型。具体运行时隐藏在 Pimpl 内；业务、收集、压缩和传输可以独立测试。采用 RAII 管理文件、归档器、实例锁与请求工作目录。没有复制控制会话、CAN、手或手套的业务代码。
 
-参考基线：`dex_hand` 的 `49dc1d5`（runtime/codec/业务层分离）、`poke-communication-protocol` 的 `8e15aaf`（FlatBuffers、PCU Key 命名）。没有修改两个参考仓库。
+协议基线：`poke-communication-protocol` 的 `feat/log-delivery-protocol@6562eeb`；对接 SDK：`poke-hand-sdk` 的 `feat/log-sdk@7ee883c`。所有消息使用 PLOG v1 + 公共 MessageHeader v2.0，拒绝没有 Header 的旧报文。
+
+正式 SDK 的 `PokeClient` 需要先完成 discovery/state。日志服务只提供日志 Key；网关与日志服务须使用一致的 `pcu_id`，并能通过同一个 Zenoh 网络访问。仅连接本服务的 17447 端口不能代替设备发现。当前四目录先使用 `LogMode.ALL`，SDK 默认的 LATEST 需要来源维护 `current_run`。
 
 ## ALL / LATEST
 
@@ -80,7 +83,7 @@ hand/
 
 ## 依赖与范围
 
-- RK：GCC 11.4、CMake、zenoh-c 1.10.2（项目内 `deps/zenoh`）、FlatBuffers 1.12.1、libarchive 3.6、OpenSSL 3、nlohmann-json。
+- RK：GCC 11.4、CMake、zenoh-c 1.10.2（项目内 `deps/zenoh`）、FlatBuffers 25.12.19（`deps/flatbuffers`）、libarchive 3.6、OpenSSL 3、nlohmann-json。
 - PC 工具：Python、eclipse-zenoh 1.10.2、flatbuffers 25.2.10；Python 只用于 SDK 模拟器，不用于 RK 服务实现。
 - `.fbs` 构建时生成 C++ / Python 代码，电脑工具使用 `tools/generated` 中同一份 schema 的生成物。
 - 安装依赖时 Ubuntu 的 libarchive/libssl 运行库随开发包更新了补丁版本。
@@ -96,7 +99,7 @@ hand/
 
 收集器按目录递归收集普通文件，没有按上述文件名过滤；`.gz` 文件原样放入交付包。目录须存在，且仍受 256 MiB 源文件总量限制。真实日志先使用 `--mode all`；没有 `current_run` 标记及启动批次目录的来源不支持当前 LATEST 语义。不要用“当前活动文件”冒充“本次启动日志”。此配置变更须同步到板端并重启服务才生效。
 
-合成测试数据仍可由 `tools/create_fixtures.py` 生成，用于独立测试配置。业务轮转、logrotate 配置、统一 spdlog 写入、正式 SDK 接入及共享协议仓库发布均未实现。
+合成测试数据可由 `tools/create_fixtures.py` 生成，用于独立测试配置。该服务不负责业务日志写入和轮转；SDK 对接结果与连接前提见 [联调说明](docs/sdk-integration.md)。
 
 LogRotationManager 是下一阶段的模块边界，本版没有空壳实现，也不接管现有模块轮转。同一文件只能由一个轮转机制管理。
 

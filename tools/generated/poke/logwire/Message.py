@@ -10,12 +10,16 @@ class Message(object):
     __slots__ = ['_tab']
 
     @classmethod
-    def GetRootAsMessage(cls, buf, offset):
+    def GetRootAs(cls, buf, offset=0):
         n = flatbuffers.encode.Get(flatbuffers.packer.uoffset, buf, offset)
         x = Message()
         x.Init(buf, n + offset)
         return x
 
+    @classmethod
+    def GetRootAsMessage(cls, buf, offset=0):
+        """This method is deprecated. Please switch to GetRootAs."""
+        return cls.GetRootAs(buf, offset)
     @classmethod
     def MessageBufferHasIdentifier(cls, buf, offset, size_prefixed=False):
         return flatbuffers.util.BufferHasIdentifier(buf, offset, b"\x50\x4C\x4F\x47", size_prefixed=size_prefixed)
@@ -155,21 +159,127 @@ class Message(object):
             return self._tab.String(o + self._tab.Pos)
         return None
 
-def MessageStart(builder): builder.StartObject(14)
-def MessageAddVersion(builder, version): builder.PrependUint16Slot(0, version, 1)
-def MessageAddKind(builder, kind): builder.PrependUint8Slot(1, kind, 0)
-def MessageAddRequestId(builder, requestId): builder.PrependUOffsetTRelativeSlot(2, flatbuffers.number_types.UOffsetTFlags.py_type(requestId), 0)
-def MessageAddMode(builder, mode): builder.PrependUint8Slot(3, mode, 0)
-def MessageAddModules(builder, modules): builder.PrependUOffsetTRelativeSlot(4, flatbuffers.number_types.UOffsetTFlags.py_type(modules), 0)
-def MessageStartModulesVector(builder, numElems): return builder.StartVector(4, numElems, 4)
-def MessageAddFileName(builder, fileName): builder.PrependUOffsetTRelativeSlot(5, flatbuffers.number_types.UOffsetTFlags.py_type(fileName), 0)
-def MessageAddFileSize(builder, fileSize): builder.PrependUint64Slot(6, fileSize, 0)
-def MessageAddChunkSize(builder, chunkSize): builder.PrependUint32Slot(7, chunkSize, 0)
-def MessageAddChunkCount(builder, chunkCount): builder.PrependUint32Slot(8, chunkCount, 0)
-def MessageAddChunkIndex(builder, chunkIndex): builder.PrependUint32Slot(9, chunkIndex, 0)
-def MessageAddSha256(builder, sha256): builder.PrependUOffsetTRelativeSlot(10, flatbuffers.number_types.UOffsetTFlags.py_type(sha256), 0)
-def MessageAddData(builder, data): builder.PrependUOffsetTRelativeSlot(11, flatbuffers.number_types.UOffsetTFlags.py_type(data), 0)
-def MessageStartDataVector(builder, numElems): return builder.StartVector(1, numElems, 1)
-def MessageAddErrorCode(builder, errorCode): builder.PrependUOffsetTRelativeSlot(12, flatbuffers.number_types.UOffsetTFlags.py_type(errorCode), 0)
-def MessageAddDetail(builder, detail): builder.PrependUOffsetTRelativeSlot(13, flatbuffers.number_types.UOffsetTFlags.py_type(detail), 0)
-def MessageEnd(builder): return builder.EndObject()
+    # Message
+    def Header(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(32))
+        if o != 0:
+            x = self._tab.Indirect(o + self._tab.Pos)
+            from poke.protocol.MessageHeader import MessageHeader
+            obj = MessageHeader()
+            obj.Init(self._tab.Bytes, x)
+            return obj
+        return None
+
+def MessageStart(builder):
+    builder.StartObject(15)
+
+def Start(builder):
+    MessageStart(builder)
+
+def MessageAddVersion(builder, version):
+    builder.PrependUint16Slot(0, version, 1)
+
+def AddVersion(builder, version):
+    MessageAddVersion(builder, version)
+
+def MessageAddKind(builder, kind):
+    builder.PrependUint8Slot(1, kind, 0)
+
+def AddKind(builder, kind):
+    MessageAddKind(builder, kind)
+
+def MessageAddRequestId(builder, requestId):
+    builder.PrependUOffsetTRelativeSlot(2, flatbuffers.number_types.UOffsetTFlags.py_type(requestId), 0)
+
+def AddRequestId(builder, requestId):
+    MessageAddRequestId(builder, requestId)
+
+def MessageAddMode(builder, mode):
+    builder.PrependUint8Slot(3, mode, 0)
+
+def AddMode(builder, mode):
+    MessageAddMode(builder, mode)
+
+def MessageAddModules(builder, modules):
+    builder.PrependUOffsetTRelativeSlot(4, flatbuffers.number_types.UOffsetTFlags.py_type(modules), 0)
+
+def AddModules(builder, modules):
+    MessageAddModules(builder, modules)
+
+def MessageStartModulesVector(builder, numElems):
+    return builder.StartVector(4, numElems, 4)
+
+def StartModulesVector(builder, numElems):
+    return MessageStartModulesVector(builder, numElems)
+
+def MessageAddFileName(builder, fileName):
+    builder.PrependUOffsetTRelativeSlot(5, flatbuffers.number_types.UOffsetTFlags.py_type(fileName), 0)
+
+def AddFileName(builder, fileName):
+    MessageAddFileName(builder, fileName)
+
+def MessageAddFileSize(builder, fileSize):
+    builder.PrependUint64Slot(6, fileSize, 0)
+
+def AddFileSize(builder, fileSize):
+    MessageAddFileSize(builder, fileSize)
+
+def MessageAddChunkSize(builder, chunkSize):
+    builder.PrependUint32Slot(7, chunkSize, 0)
+
+def AddChunkSize(builder, chunkSize):
+    MessageAddChunkSize(builder, chunkSize)
+
+def MessageAddChunkCount(builder, chunkCount):
+    builder.PrependUint32Slot(8, chunkCount, 0)
+
+def AddChunkCount(builder, chunkCount):
+    MessageAddChunkCount(builder, chunkCount)
+
+def MessageAddChunkIndex(builder, chunkIndex):
+    builder.PrependUint32Slot(9, chunkIndex, 0)
+
+def AddChunkIndex(builder, chunkIndex):
+    MessageAddChunkIndex(builder, chunkIndex)
+
+def MessageAddSha256(builder, sha256):
+    builder.PrependUOffsetTRelativeSlot(10, flatbuffers.number_types.UOffsetTFlags.py_type(sha256), 0)
+
+def AddSha256(builder, sha256):
+    MessageAddSha256(builder, sha256)
+
+def MessageAddData(builder, data):
+    builder.PrependUOffsetTRelativeSlot(11, flatbuffers.number_types.UOffsetTFlags.py_type(data), 0)
+
+def AddData(builder, data):
+    MessageAddData(builder, data)
+
+def MessageStartDataVector(builder, numElems):
+    return builder.StartVector(1, numElems, 1)
+
+def StartDataVector(builder, numElems):
+    return MessageStartDataVector(builder, numElems)
+
+def MessageAddErrorCode(builder, errorCode):
+    builder.PrependUOffsetTRelativeSlot(12, flatbuffers.number_types.UOffsetTFlags.py_type(errorCode), 0)
+
+def AddErrorCode(builder, errorCode):
+    MessageAddErrorCode(builder, errorCode)
+
+def MessageAddDetail(builder, detail):
+    builder.PrependUOffsetTRelativeSlot(13, flatbuffers.number_types.UOffsetTFlags.py_type(detail), 0)
+
+def AddDetail(builder, detail):
+    MessageAddDetail(builder, detail)
+
+def MessageAddHeader(builder, header):
+    builder.PrependUOffsetTRelativeSlot(14, flatbuffers.number_types.UOffsetTFlags.py_type(header), 0)
+
+def AddHeader(builder, header):
+    MessageAddHeader(builder, header)
+
+def MessageEnd(builder):
+    return builder.EndObject()
+
+def End(builder):
+    return MessageEnd(builder)

@@ -10,4 +10,3 @@ class Kind(object):
     ACK = 4
     COMPLETE = 5
     ERROR = 6
-

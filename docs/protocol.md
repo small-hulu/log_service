@@ -1,6 +1,6 @@
-# 日志交付协议草案 v1
+# 日志交付协议
 
-这是独立项目的日志扩展草案，不是已经发布的团队 PCU 协议。文件标识 `PLOG`，版本 1，字段见 `schemas/log.fbs`。SDK 正式接入前应共同评审，再迁入公共协议仓库并对齐公共 MessageHeader。
+基线为公共协议仓库 `feat/log-delivery-protocol@6562eeb`。`schemas/log.fbs`、`schemas/common.fbs` 与该提交一致；FlatBuffers 编译器和 C++ 头文件固定为 25.12.19。文件标识 `PLOG`、日志格式版本 1，公共 MessageHeader 使用 v2.0。没有 Header 的旧草案客户端需要一起升级。
 
 ## SDK 连接信息与接入步骤
 
@@ -12,11 +12,27 @@
 | Zenoh TCP 端口 | `17447` | 完整连接地址为 `tcp/10.23.2.11:17447` |
 | 设备标识 `pcu_id` | `rk3588-log-test` | 组成下方请求、结果和确认 Key；不是密码 |
 | 模块名称 `modules` | `poke_recorder`、`video_manager`、`pico_broker`、`dex_hand` | 指定日志来源；空列表表示全部配置来源；需部署新版来源配置 |
-| 报文定义 | `schemas/log.fbs`，`PLOG` v1 | SDK 与盒子使用同一版 FlatBuffers 定义 |
+| 报文定义 | `schemas/log.fbs` + `schemas/common.fbs` | PLOG v1 + 公共 Header v2.0 |
 
 连接前提：盒子上的 `log_service` 已启动并监听端口，电脑到盒子网络互通且 TCP 17447 可访问。**ping 通只表示 IP 可达，不代表日志服务或端口已就绪。** SDK 必须通过 Zenoh 建立连接，不能直接向普通 TCP Socket 发送 GET 文本。
 
 当前开发配置未启用身份认证。SDK 不需要 SSH 登录、SSH 账号密码，也不需要知道盒子上的日志路径；路径由盒子侧配置管理。正式部署的认证方式需另行约定。
+
+正式 SDK 的 `PokeClient` 还依赖 discovery/state；这两个接口由网关提供，不属于日志服务。两者须处于同一个可达的 Zenoh 网络，且 `pcu_id` 一致。独立日志服务可做传输测试，不能单独完成 SDK 设备发现。
+
+## 公共 Header
+
+所有 GET、ACK 和结果消息（含 ERROR）都必须携带：
+
+| 字段 | 规则 |
+|---|---|
+| protocol_major / protocol_minor | 2 / 0；与日志 version=1 独立 |
+| producer_id | SDK 为进程唯一 ID；服务为配置中的 pcu_id |
+| stream_epoch | 非零；同一进程保持不变，重启重新生成；GET/ACK 使用同一值 |
+| sequence | 同一请求、发送方与 epoch 内非零、严格递增；与 chunk_index 无关 |
+| timestamp / timestamp_unit / clock_domain | 服务发送 Unix 纳秒时间：Nanoseconds / UnixEpoch |
+
+服务用进程级计数器生成序号，各请求可能存在序号间隔。ACK 必须匹配活动请求的 SDK producer/epoch，序号大于该请求已见的序号，且大小、SHA-256 正确。错误 ACK 不延长超时；身份匹配但内容错误的 ACK 会消耗其序号。Header 用于流一致性校验，不是身份认证。
 
 SDK 获取一次日志的步骤：
 

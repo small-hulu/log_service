@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import queue
+import secrets
 import sys
 import tarfile
 import time
@@ -14,11 +15,15 @@ import zenoh
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "generated"))
 from poke.logwire import Message as Wire
+from poke.protocol import MessageHeader as Header
 
 GET, BEGIN, CHUNK, END, ACK, COMPLETE, ERROR = range(7)
+PRODUCER = "sdk-test-" + uuid.uuid4().hex
+EPOCH = secrets.randbits(64) or 1
 
 
-def encode(kind, request_id, mode=0, modules=(), size=0, digest=""):
+def encode(kind, request_id, mode=0, modules=(), size=0, digest="", *, sequence=None,
+           producer=PRODUCER, epoch=EPOCH, include_header=True):
     b = flatbuffers.Builder(512)
     rid = b.CreateString(request_id)
     sha = b.CreateString(digest)
@@ -27,7 +32,17 @@ def encode(kind, request_id, mode=0, modules=(), size=0, digest=""):
     for name in reversed(names):
         b.PrependUOffsetTRelative(name)
     names = b.EndVector()
+    producer_offset = b.CreateString(producer)
+    Header.Start(b)
+    Header.AddProducerId(b, producer_offset)
+    Header.AddStreamEpoch(b, epoch)
+    Header.AddSequence(b, sequence if sequence is not None else (1 if kind == GET else 2))
+    Header.AddTimestamp(b, time.time_ns())
+    Header.AddClockDomain(b, 1)
+    header = Header.End(b)
     Wire.MessageStart(b)
+    if include_header:
+        Wire.MessageAddHeader(b, header)
     Wire.MessageAddKind(b, kind)
     Wire.MessageAddRequestId(b, rid)
     Wire.MessageAddMode(b, mode)
@@ -71,6 +86,9 @@ def download(args):
     acked = False
     members = []
     digest = ""
+    server_epoch = None
+    server_sequence = 0
+    archive_name = None
     try:
         with zenoh.open(config) as session:
             subscriber = session.declare_subscriber(prefix + "result/" + rid, receive)
@@ -94,12 +112,21 @@ def download(args):
                     m = Wire.Message.GetRootAsMessage(raw, 0)
                     if m.Version() != 1 or text(m.RequestId()) != rid:
                         raise RuntimeError("response identity/version mismatch")
+                    header = m.Header()
+                    if (header is None or header.ProtocolMajor() != 2 or header.ProtocolMinor() != 0
+                            or text(header.ProducerId()) != args.pcu or not header.StreamEpoch()
+                            or header.Sequence() <= server_sequence):
+                        raise RuntimeError("invalid or replayed service header")
+                    if server_epoch is not None and server_epoch != header.StreamEpoch():
+                        raise RuntimeError("service epoch changed during transfer")
+                    server_epoch, server_sequence = header.StreamEpoch(), header.Sequence()
                     if m.Kind() == ERROR:
                         code = text(m.ErrorCode())
                         if args.expect_error == code:
                             return {"passed": True, "expected_error": code, "request_id": rid}
                         raise RuntimeError(f"{code}: {text(m.Detail())}")
                     if m.Kind() == BEGIN:
+                        archive_name = text(m.FileName())
                         candidate = (m.FileSize(), m.ChunkSize(), m.ChunkCount(), text(m.Sha256()))
                         size, chunk_size, count, sha = candidate
                         if not (0 < size <= 512 * 1024 * 1024 and 1024 <= chunk_size <= 65536
@@ -130,12 +157,16 @@ def download(args):
                             stream.write(data)
                             received.add(index)
                     elif m.Kind() == END:
-                        if metadata != (m.FileSize(), m.ChunkSize(), m.ChunkCount(), text(m.Sha256())):
+                        if (archive_name != text(m.FileName()) or
+                                metadata != (m.FileSize(), m.ChunkSize(), m.ChunkCount(), text(m.Sha256()))):
                             raise RuntimeError("END metadata mismatch")
                         end_received = True
                     elif m.Kind() == COMPLETE:
                         if not acked:
                             raise RuntimeError("completion before verified ACK")
+                        if (archive_name != text(m.FileName()) or
+                                metadata != (m.FileSize(), m.ChunkSize(), m.ChunkCount(), text(m.Sha256()))):
+                            raise RuntimeError("COMPLETE metadata mismatch")
                         break
                     if metadata and end_received and len(received) == metadata[2] and not acked:
                         stream.flush()
@@ -174,6 +205,7 @@ def download(args):
         partial.replace(destination)
         return {"passed": True, "mode": args.mode, "request_id": rid, "archive": str(destination),
                 "bytes": metadata[0], "chunks": len(received), "sha256": digest,
+                "server_epoch": server_epoch, "last_sequence": server_sequence,
                 "members": members, "elapsed_seconds": round(time.monotonic() - started, 3)}
     finally:
         partial.unlink(missing_ok=True)

@@ -1,14 +1,29 @@
 #include "gateway.hpp"
 #include <zenoh.h>
 #include <iostream>
+#include <limits>
+#include <openssl/rand.h>
 
 namespace poke::log {
+namespace {
+std::uint64_t process_epoch() {
+    std::uint64_t epoch{};
+    do {
+        if (RAND_bytes(reinterpret_cast<unsigned char*>(&epoch), sizeof(epoch)) != 1)
+            throw Error("INTERNAL", "cannot generate log service epoch");
+    } while (!epoch);
+    return epoch;
+}
+}
 struct LogGateway::Runtime {
     z_owned_session_t session;
     z_owned_subscriber_t requests, acknowledgements;
-    std::string prefix;
+    std::string prefix, producer_id;
+    std::uint64_t epoch, sequence{};
+    std::mutex send_mutex;
     std::function<void(Message)> receiver;
-    explicit Runtime(const Config& config) : prefix("poke/pcu/" + config.pcu_id + "/logs/") {
+    explicit Runtime(const Config& config)
+        : prefix("poke/pcu/" + config.pcu_id + "/logs/"), producer_id(config.pcu_id), epoch(process_epoch()) {
         z_internal_null(&session); z_internal_null(&requests); z_internal_null(&acknowledgements);
         z_owned_config_t options;
         if (zc_config_from_file(&options, config.zenoh_config.c_str()) < 0)
@@ -66,7 +81,20 @@ void LogGateway::start(std::function<void(Message)> receiver) {
 }
 void LogGateway::stop_receiving() { runtime_->stop(); }
 void LogGateway::send(const Message& m) {
-    const auto payload = LogCodec::encode(m);
+    // Serialize numbering and publication together, including concurrent BUSY/ERROR replies.
+    // A process-wide counter gives every request a strictly increasing subsequence.
+    std::lock_guard<std::mutex> lock(runtime_->send_mutex);
+    if (runtime_->sequence == std::numeric_limits<std::uint64_t>::max())
+        throw Error("TRANSFER", "log sequence exhausted; restart service with a new epoch");
+    auto outgoing = m;
+    outgoing.header = {};
+    outgoing.header.producer_id = runtime_->producer_id;
+    outgoing.header.stream_epoch = runtime_->epoch;
+    outgoing.header.sequence = ++runtime_->sequence;
+    outgoing.header.timestamp = static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count());
+    outgoing.header.clock_domain = ClockDomain::UnixEpoch;
+    const auto payload = LogCodec::encode(outgoing);
     const auto key = runtime_->prefix + "result/" + m.request_id;
     z_view_keyexpr_t expr;
     if (z_view_keyexpr_from_str(&expr, key.c_str()) < 0) throw Error("ZENOH", "invalid response key");

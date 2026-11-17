@@ -5,4 +5,3 @@
 class Mode(object):
     ALL = 0
     LATEST = 1
-

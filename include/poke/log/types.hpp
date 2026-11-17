@@ -10,6 +10,23 @@ namespace fs = std::filesystem;
 using Bytes = std::vector<std::uint8_t>;
 enum class Mode { All, Latest };
 enum class Kind { Get, Begin, Chunk, End, Ack, Complete, Error };
+enum class ClockDomain : std::uint8_t { Unspecified, UnixEpoch, HostMonotonic, DeviceMonotonic };
+enum class TimeUnit : std::uint8_t { Nanoseconds, Microseconds, Milliseconds };
+// Transport-neutral representation of the shared protocol envelope.
+struct MessageHeader {
+    std::uint16_t protocol_major{2}, protocol_minor{};
+    std::string producer_id;
+    std::uint64_t stream_epoch{}, sequence{}, timestamp{};
+    TimeUnit timestamp_unit{TimeUnit::Nanoseconds};
+    ClockDomain clock_domain{ClockDomain::Unspecified};
+    std::uint64_t time_mapping_revision{}, timestamp_uncertainty{};
+    bool valid() const noexcept {
+        return protocol_major == 2 && protocol_minor == 0 && !producer_id.empty() &&
+            producer_id.find('\0') == std::string::npos &&
+            stream_epoch != 0 && sequence != 0 &&
+            timestamp_unit <= TimeUnit::Milliseconds && clock_domain <= ClockDomain::DeviceMonotonic;
+    }
+};
 struct Message {
     Kind kind{Kind::Get};
     std::string request_id;
@@ -21,6 +38,7 @@ struct Message {
     std::string sha256;
     Bytes data;
     std::string error_code, detail;
+    MessageHeader header;
 };
 struct Source { std::string name; fs::path root; };
 struct Config {

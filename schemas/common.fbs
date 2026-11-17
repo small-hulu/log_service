@@ -1,0 +1,80 @@
+// Common types and enums shared across all message categories.
+// This file contains base types, device identifiers, and protocol version information.
+
+namespace poke.protocol;
+
+enum ClockDomain : byte {
+  Unspecified = 0,
+  UnixEpoch = 1,
+  HostMonotonic = 2,
+  DeviceMonotonic = 3
+}
+
+enum TimeUnit : byte {
+  Nanoseconds = 0,
+  Microseconds = 1,
+  Milliseconds = 2
+}
+
+enum DeviceKind : byte {
+  Unknown = 0,
+  Hand = 1,
+  Glove = 2,
+  EgocentricCamera = 3,
+}
+
+enum Handedness : byte {
+  Unknown = 0,
+  Left = 1,
+  Right = 2
+}
+
+// Physical connector identity is independent of device kind and handedness.
+enum PhysicalPort : byte {
+  Unknown = 0,
+  A = 1,
+  B = 2,
+  C = 3,
+  D = 4,
+  E = 5,
+  F = 6,
+  G = 7
+}
+
+// Common v2 stream envelope. A new producer process must choose a new stream_epoch.
+table MessageHeader {
+  protocol_major: ushort = 2;
+  protocol_minor: ushort = 0;
+  producer_id: string;
+  stream_epoch: uint64;
+  sequence: uint64;
+  timestamp: uint64;
+  timestamp_unit: TimeUnit = Nanoseconds;
+  clock_domain: ClockDomain = Unspecified;
+  time_mapping_revision: uint64 = 0;
+  timestamp_uncertainty: uint64 = 0;
+}
+
+enum Port : byte {
+  HandLeft = 0,
+  HandRight = 1,
+  GloveLeft = 2,
+  GloveRight = 3,
+  VideoLeft = 4,
+  VideoRight = 5,
+  VideoEgocentric = 6
+}
+
+table CustomEventHotkey {
+  event_type: string;
+  key: string;
+}
+
+table CollectionHotkeys {
+  start_data_collection: string;
+  stop_data_collection: string;
+  // stop and abandon current recording
+  cancel_data_collection: string;
+  // custom event hotkeys: each key press during recording logs the event_type with a timestamp
+  custom_event_hot_keys: [CustomEventHotkey];
+}

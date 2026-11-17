@@ -43,6 +43,8 @@ int main() {
         expect("CANCELLED", [&] { collector.collect(request, root / "cancel", [] { return true; }); });
         TarGzipArchiver archiver; archiver.compress(root / "all", root / "logs.tar.gz", [] { return false; });
         require(sha256_file(root / "logs.tar.gz").size() == 64, "missing hash");
+        request.header.producer_id = "sdk-core-test";
+        request.header.stream_epoch = 42; request.header.sequence = 1;
         auto encoded = LogCodec::encode(request);
         require(LogCodec::decode(encoded).request_id == request.request_id, "codec round trip");
         encoded.resize(5);

@@ -7,11 +7,19 @@ find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(LibArchive REQUIRED)
 find_package(zenohc REQUIRED CONFIG)
-find_program(FLATC flatc REQUIRED)
+set(FLATBUFFERS_VERSION_REQUIRED "25.12.19")
+find_program(FLATC flatc HINTS "${CMAKE_CURRENT_SOURCE_DIR}/deps/flatbuffers/bin" REQUIRED)
+find_path(FLATBUFFERS_INCLUDE_DIR flatbuffers/flatbuffers.h
+    HINTS "${CMAKE_CURRENT_SOURCE_DIR}/deps/flatbuffers/include" REQUIRED)
+execute_process(COMMAND ${FLATC} --version OUTPUT_VARIABLE FLATC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(NOT FLATC_VERSION STREQUAL "flatc version ${FLATBUFFERS_VERSION_REQUIRED}")
+    message(FATAL_ERROR "Protocol requires flatc ${FLATBUFFERS_VERSION_REQUIRED}; run python3 tools/fetch_flatbuffers.py. Found: ${FLATC_VERSION}")
+endif()
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated)
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/log_generated.h
-    COMMAND ${FLATC} --cpp --python -o ${CMAKE_CURRENT_BINARY_DIR}/generated ${CMAKE_CURRENT_SOURCE_DIR}/schemas/log.fbs
-    DEPENDS schemas/log.fbs VERBATIM)
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/log_generated.h ${CMAKE_CURRENT_BINARY_DIR}/generated/common_generated.h
+    COMMAND ${FLATC} --cpp --python -o ${CMAKE_CURRENT_BINARY_DIR}/generated
+        ${CMAKE_CURRENT_SOURCE_DIR}/schemas/common.fbs ${CMAKE_CURRENT_SOURCE_DIR}/schemas/log.fbs
+    DEPENDS schemas/log.fbs schemas/common.fbs VERBATIM)
 add_library(log_core
     src/app/config.cpp src/collection/file_collector.cpp src/archive/tar_archiver.cpp
     src/transfer/log_transfer.cpp src/service/log_service.cpp)
@@ -20,7 +28,7 @@ target_link_libraries(log_core PUBLIC Threads::Threads OpenSSL::Crypto LibArchiv
 target_compile_options(log_core PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_library(log_gateway src/communication/log_codec.cpp src/communication/zenoh_runtime.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/generated/log_generated.h)
-target_include_directories(log_gateway PUBLIC src/communication PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated)
+target_include_directories(log_gateway PUBLIC src/communication PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated ${FLATBUFFERS_INCLUDE_DIR})
 target_link_libraries(log_gateway PUBLIC log_core PRIVATE zenohc::lib)
 target_compile_options(log_gateway PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_executable(log_service src/app/main.cpp)
@@ -32,3 +40,7 @@ add_test(NAME log_core_contracts COMMAND log_tests)
 add_executable(log_service_tests tests/service_tests.cpp)
 target_link_libraries(log_service_tests PRIVATE log_core)
 add_test(NAME log_service_lifecycle COMMAND log_service_tests)
+add_executable(log_codec_tests tests/codec_tests.cpp)
+target_include_directories(log_codec_tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated ${FLATBUFFERS_INCLUDE_DIR})
+target_link_libraries(log_codec_tests PRIVATE log_gateway)
+add_test(NAME log_protocol_header COMMAND log_codec_tests)

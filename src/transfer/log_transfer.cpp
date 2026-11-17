@@ -37,7 +37,7 @@ Message LogTransfer::describe(const Message& request, const fs::path& archive) c
     m.sha256 = sha256_file(archive);
     return m;
 }
-void LogTransfer::send(const Message& metadata, const fs::path& archive, const Cancelled& cancelled) {
+void LogTransfer::send_data(const Message& metadata, const fs::path& archive, const Cancelled& cancelled) {
     transport_.send(metadata);
     std::ifstream in(archive, std::ios::binary);
     if (!in) throw Error("TRANSFER", "cannot open archive");
@@ -58,8 +58,5 @@ void LogTransfer::send(const Message& metadata, const fs::path& archive, const C
         while (!cancelled() && std::chrono::steady_clock::now() < deadline)
             std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
-    auto end = metadata;
-    end.kind = Kind::End;
-    transport_.send(end);
 }
 }

@@ -35,10 +35,16 @@ void LogService::fail(const std::string& id, const std::string& code, const std:
     } catch (const std::exception& e) { std::cerr << "error reply failed: " << e.what() << '\n'; }
 }
 void LogService::receive(Message m) {
-    if (!valid_segment(m.request_id) || stopping_) return;
+    if (!valid_segment(m.request_id) || !m.header.valid() || stopping_) return;
     std::unique_lock<std::mutex> lock(mutex_);
     if (m.kind == Kind::Ack) {
-        if (m.request_id == active_id_ && !expected_hash_.empty() && m.sha256 == expected_hash_ && m.file_size == expected_size_) {
+        if (m.request_id != active_id_ || m.header.producer_id != active_client_.producer_id ||
+            m.header.stream_epoch != active_client_.stream_epoch || m.header.sequence <= active_client_.sequence)
+            return;
+        // Consume a matching stream sequence even when its metadata is wrong.
+        // Header matching is a stream guard, not transport authentication.
+        active_client_.sequence = m.header.sequence;
+        if (awaiting_ack_ && !expected_hash_.empty() && m.sha256 == expected_hash_ && m.file_size == expected_size_) {
             acknowledged_ = true;
             cv_.notify_all();
         }
@@ -46,7 +52,12 @@ void LogService::receive(Message m) {
     }
     if (m.kind != Kind::Get) return;
     // Active duplicates are ignored: the original transfer is still in flight.
-    if (m.request_id == active_id_) return;
+    if (m.request_id == active_id_) {
+        if (m.header.producer_id == active_client_.producer_id && m.header.stream_epoch == active_client_.stream_epoch &&
+            m.header.sequence > active_client_.sequence)
+            active_client_.sequence = m.header.sequence;
+        return;
+    }
     std::string rejection;
     if (std::find(recent_ids_.begin(), recent_ids_.end(), m.request_id) != recent_ids_.end()) rejection = "DUPLICATE";
     else if (!active_id_.empty()) rejection = "BUSY";
@@ -56,6 +67,7 @@ void LogService::receive(Message m) {
         return;
     }
     active_id_ = m.request_id;
+    active_client_ = m.header;
     pending_ = std::move(m);
     cv_.notify_all();
 }
@@ -76,7 +88,8 @@ void LogService::run() {
             std::lock_guard<std::mutex> lock(mutex_);
             recent_ids_.push_back(request.request_id);
             if (recent_ids_.size() > 128) recent_ids_.pop_front();
-            active_id_.clear(); expected_hash_.clear(); acknowledged_ = false;
+            active_id_.clear(); expected_hash_.clear(); expected_size_ = 0;
+            active_client_ = {}; awaiting_ack_ = false; acknowledged_ = false;
         }
     }
 }
@@ -88,11 +101,15 @@ void LogService::execute(const Message& request) {
     collector_.collect(request, snapshot, cancelled);
     archiver_.compress(snapshot, archive, cancelled);
     const auto metadata = transfer_.describe(request, archive);
+    transfer_.send_data(metadata, archive, cancelled);
     {
         std::lock_guard<std::mutex> lock(mutex_);
         expected_hash_ = metadata.sha256; expected_size_ = metadata.file_size;
+        awaiting_ack_ = true;
     }
-    transfer_.send(metadata, archive, cancelled);
+    // Arm first: a fast SDK can ACK while the END publication is still returning.
+    auto end = metadata; end.kind = Kind::End;
+    transport_.send(end);
     {
         std::unique_lock<std::mutex> lock(mutex_);
         if (!cv_.wait_for(lock, std::chrono::seconds(config_.ack_timeout_seconds), [&] { return acknowledged_ || stopping_; }))
