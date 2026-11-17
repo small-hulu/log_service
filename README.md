@@ -2,6 +2,8 @@
 
 RK3588 上独立运行的 C++17 日志获取服务。SDK 发一个业务 GET 请求，服务收集日志、生成 tar.gz、通过 Zenoh 主动发送数据分块；SDK 校验后 ACK，服务返回 COMPLETE。没有任务进度和状态查询接口。
 
+当前版本已于 2026-11-17 完成初步联调：SDK 通过 dex_hand 网关发现设备、读取状态并下载日志；同事 Linux 端已确认压缩包并成功查看四模块文件清单。统一入口为 `tcp/10.23.2.11:7447`，PCU ID 为 `rk3588-log-test`。当前使用仿真设备和测试日志，尚不代表真实硬件或生产稳定性验收。
+
 ## 路径与启动
 
 - RK 工程：`/root/xsw/log_service`
@@ -24,7 +26,22 @@ bash run.sh stop          # 停止服务
 
 编译默认使用 Debug 和两个并行任务，可用 `BUILD_TYPE=Release JOBS=2 bash build.sh` 调整。编译不会自动重启服务。
 
-也可先停止后台服务，再前台运行 `build/log_service config/service.json`。启动脚本不安装 systemd，不设置开机启动；关闭 SSH 不影响后台服务。业务源目录须事先存在。
+当前盒子由 `log_service.service` 管理，`run.sh` 自动转交 systemd；未安装该单元时仍使用后台进程。业务源目录须事先存在，打包临时目录为 `/userdata/log_service/work`。
+
+通信与 dex_hand 共用本机 Router：`config/zenoh.json5` 使用 client 连接 `tcp/127.0.0.1:7447`，不监听独立端口。网关提供 discovery/state，日志服务的 `pcu_id` 必须与网关一致。
+
+当前仿真部署使用 `config/log_service.service`，加入 `poke-log-test.target` 后可统一启动：`systemctl start poke-log-test.target`。该单元中的路径和 Router/target 名称对应当前盒子，迁移部署时按实际服务名调整；未设置开机自启。
+
+首次接入当前 dex_hand 启动组（root 执行）：
+
+```bash
+bash run.sh stop
+cp config/log_service.service /etc/systemd/system/
+mkdir -p /etc/systemd/system/poke-log-test.target.d
+cp config/poke-log-test.target.d/log-service.conf /etc/systemd/system/poke-log-test.target.d/
+systemctl daemon-reload
+systemctl start poke-log-test.target
+```
 
 Windows PowerShell：
 
@@ -39,10 +56,10 @@ python -m venv .venv
 # 只获取指定模块
 & .\tools\sdk_get.ps1 -Mode all -Modules poke_recorder,dex_hand
 # 也可直接使用 Python 客户端
-& .\.venv\Scripts\python.exe .\tools\sdk_client.py --endpoint tcp/10.23.2.11:17447 --mode all --output D:\log_client_test
+& .\.venv\Scripts\python.exe .\tools\sdk_client.py --endpoint tcp/10.23.2.11:7447 --mode all --output D:\log_client_test
 ```
 
-默认连接 `tcp/10.23.2.11:17447`，PCU ID 为 `rk3588-log-test`。IP 是当前开发盒子的配置，可通过 `-Endpoint` / `--endpoint` 修改；输出目录可通过 `-Output` / `--output` 修改。结果为压缩包路径、SHA-256、分块数、包内清单。工具读取压缩包以验证内容，不自动解压到磁盘。
+默认连接 `tcp/10.23.2.11:7447`，PCU ID 为 `rk3588-log-test`。IP 是当前开发盒子的配置，可通过 `-Endpoint` / `--endpoint` 修改；输出目录可通过 `-Output` / `--output` 修改。结果为压缩包路径、SHA-256、分块数、包内清单。工具读取压缩包以验证内容，不自动解压到磁盘。
 
 ## 模块边界
 
@@ -61,7 +78,7 @@ LogService（单后台工作线程，调度与确认）
 
 协议基线：`poke-communication-protocol` 的 `feat/log-delivery-protocol@6562eeb`；对接 SDK：`poke-hand-sdk` 的 `feat/log-sdk@7ee883c`。所有消息使用 PLOG v1 + 公共 MessageHeader v2.0，拒绝没有 Header 的旧报文。
 
-正式 SDK 的 `PokeClient` 需要先完成 discovery/state。日志服务只提供日志 Key；网关与日志服务须使用一致的 `pcu_id`，并能通过同一个 Zenoh 网络访问。仅连接本服务的 17447 端口不能代替设备发现。当前四目录先使用 `LogMode.ALL`，SDK 默认的 LATEST 需要来源维护 `current_run`。
+正式 SDK 连接 `tcp/10.23.2.11:7447`，先通过 dex_hand 网关发现 `rk3588-log-test` 并获取状态，再调用日志接口。日志服务只提供日志 Key。当前四目录先使用 `LogMode.ALL`，SDK 默认的 LATEST 需要来源维护 `current_run`。
 
 ## ALL / LATEST
 
@@ -107,7 +124,7 @@ LogRotationManager 是下一阶段的模块边界，本版没有空壳实现，�
 
 - 同时一个任务；其他请求返回 BUSY。最多 256 MiB 源文件、10000 个文件、64 KiB/块、4 MiB/s 发送速率（可配置）。临时磁盘还需要快照与压缩包的空间。
 - ACK 超时、成功、普通异常及 SIGTERM 会清理请求临时目录；SIGKILL/掉电遗留目录需人工确认后清理，本版不自动恢复。
-- 网络使用独立 TCP 17447，不改变原控制程序端口，不访问 CAN。当前为可信开发网直连配置，尚未接入团队身份认证/TLS/访问控制。
+- 网络共用 dex_hand 的 Router TCP 7447，日志服务不监听 17447、不访问 CAN。当前为可信开发网配置，尚未接入团队身份认证/TLS/访问控制。
 - 第一版没有断点续传和分块补发；接收端发现缺块、超时或校验失败须用新 request_id 重试完整请求。不能把发布成功视为已交付。
 
 协议详见 [docs/protocol.md](docs/protocol.md)，历史模拟数据验收记录见 [docs/e2e-results.json](docs/e2e-results.json)，本次更新及四目录验证结果见 [更新记录](CHANGELOG.md)。

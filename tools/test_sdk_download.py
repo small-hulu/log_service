@@ -16,7 +16,7 @@ import time
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sdk-root", type=Path, required=True, help="SDK checkout containing python_sdk")
-    parser.add_argument("--endpoint", default="tcp/10.23.2.11:17447")
+    parser.add_argument("--endpoint", default="tcp/10.23.2.11:7447")
     parser.add_argument("--pcu", default="rk3588-log-test")
     parser.add_argument("--output", type=Path, default=Path("D:/log_client_test/sdk_protocol_test"))
     parser.add_argument("--rounds", type=int, default=10)

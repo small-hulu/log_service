@@ -213,7 +213,7 @@ def download(args):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--endpoint", default="tcp/10.23.2.11:17447")
+    p.add_argument("--endpoint", default="tcp/10.23.2.11:7447")
     p.add_argument("--pcu", default="rk3588-log-test")
     p.add_argument("--mode", choices=["all", "latest"], default="all")
     p.add_argument("--modules", nargs="*", default=[])

@@ -1,5 +1,12 @@
 # 更新记录
 
+## 2026-11-17：统一网关入口，初步 SDK 联调通过
+
+- log_service 以 client 接入 dex_hand 共用的 Zenoh Router，统一使用 7447，取消独立 17447 监听；同步 Windows 工具默认地址。
+- 新增当前盒子的 systemd 单元及启动组配置，run.sh 自动使用已安装的服务；打包临时目录迁移到 `/userdata/log_service/work`。
+- 原版 SDK 的发现、连接、状态读取、全量和指定模块下载通过；同事 Linux 端完成 ALL 下载、确认和压缩包清单检查。
+- 当前为仿真设备及测试数据的初步联调；未修改 SDK，未设置开机自启，真实日志仍须逐模块接入，LATEST 仍要求 current_run。
+
 ## 2026-11-17：对齐公共日志协议并完成 SDK 传输验证
 
 - 对齐公共协议 `6562eeb`，增加必填 MessageHeader v2.0，保留 PLOG v1、消息枚举和三类日志 Key。

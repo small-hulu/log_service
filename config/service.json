@@ -1,7 +1,7 @@
 {
   "pcu_id": "rk3588-log-test",
   "zenoh_config": "/root/xsw/log_service/config/zenoh.json5",
-  "work_root": "/root/xsw/log_service/runtime/work",
+  "work_root": "/userdata/log_service/work",
   "max_bytes": 268435456,
   "max_files": 10000,
   "chunk_size": 65536,

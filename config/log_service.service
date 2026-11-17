@@ -1,0 +1,15 @@
+[Unit]
+Description=Poke log service on the dex_hand Zenoh network
+Requires=poke-log-test-router.service
+After=poke-log-test-router.service
+PartOf=poke-log-test.target
+
+[Service]
+Type=exec
+WorkingDirectory=/root/xsw/log_service
+ExecStart=/root/xsw/log_service/build/log_service /root/xsw/log_service/config/service.json
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=30
+StandardOutput=append:/root/xsw/log_service/runtime/service.log
+StandardError=append:/root/xsw/log_service/runtime/service.log

@@ -8,6 +8,14 @@ if [[ $# -gt 1 ]]; then
   exit 2
 fi
 
+# Use the installed supervisor only when it manages this project directory.
+if command -v systemctl >/dev/null 2>&1 &&
+   [[ "$(systemctl show log_service.service -p WorkingDirectory --value 2>/dev/null || true)" == "$project" ]]; then
+  case "$action" in
+    start|stop|restart|status) exec systemctl "$action" log_service.service ;;
+  esac
+fi
+
 case "$action" in
   start|restart)
     if [[ ! -x "$project/build/log_service" ]]; then
